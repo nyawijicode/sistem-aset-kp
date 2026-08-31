@@ -10,7 +10,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Laporan Daftar Aset
     Route::get('/laporan/aset', function () {
-        $query = Asset::orderBy('name');
+        $query = Asset::with('serialNumbers')->orderBy('name');
 
         if (request('category')) {
             $query->where('category', request('category'));
@@ -38,7 +38,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Laporan Aset Masuk
     Route::get('/laporan/aset-masuk', function () {
-        $query = AssetIn::with(['asset', 'creator'])->latest('date');
+        $query = AssetIn::with(['asset', 'creator', 'serialNumbers'])->latest('date');
 
         if (request('date_from')) {
             $query->whereDate('date', '>=', request('date_from'));
@@ -75,7 +75,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Laporan Aset Keluar
     Route::get('/laporan/aset-keluar', function () {
-        $query = AssetOut::with(['asset', 'creator'])->latest('date');
+        $query = AssetOut::with(['asset', 'creator', 'serialNumbers'])->latest('date');
 
         if (request('date_from')) {
             $query->whereDate('date', '>=', request('date_from'));
