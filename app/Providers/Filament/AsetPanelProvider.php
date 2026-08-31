@@ -10,6 +10,10 @@ use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+use App\Filament\Widgets\AssetKeluarChartWidget;
+use App\Filament\Widgets\AssetMasukChartWidget;
+use App\Filament\Widgets\AssetStokKritisWidget;
+use App\Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -37,7 +41,10 @@ class AsetPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
-                Widgets\AccountWidget::class,
+                StatsOverviewWidget::class,
+                AssetStokKritisWidget::class,
+                AssetMasukChartWidget::class,
+                AssetKeluarChartWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,

@@ -9,9 +9,7 @@
     ]);
     @endphp
     @if(count($activeFilters))
-    <div style="margin-bottom:12px;padding:8px 12px;background:#fff7f0;border-left:4px solid #dc2626;font-size:12px;color:#374151;">
-        <strong>Filter aktif:</strong> {{ implode(' &nbsp;|&nbsp; ', $activeFilters) }}
-    </div>
+
     @endif
 
     <table>
