@@ -91,30 +91,40 @@ class AssetInResource extends Resource
                 ->disabled(fn(?AssetIn $record) => $record !== null) // asset tidak bisa diganti saat edit
                 ->afterStateUpdated(fn(Set $set) => $set('serial_numbers', []))
                 ->createOptionForm([
-                    Forms\Components\TextInput::make('code')
-                        ->label('Kode Aset')
-                        ->required()
-                        ->unique('assets', 'code')
-                        ->maxLength(50),
-                    Forms\Components\TextInput::make('name')
-                        ->label('Nama Aset')
-                        ->required()
-                        ->maxLength(255),
-                    Forms\Components\TextInput::make('category')
-                        ->label('Kategori')
-                        ->maxLength(255),
-                    Forms\Components\TextInput::make('unit')
-                        ->label('Satuan')
-                        ->required()
-                        ->default('unit'),
-                    Forms\Components\Toggle::make('has_serial_number')
-                        ->label('Aset ini memiliki Serial Number?')
-                        ->helperText('Aktifkan jika setiap unit harus diidentifikasi dengan SN unik.')
-                        ->default(false),
-                    Forms\Components\Textarea::make('description')
-                        ->label('Keterangan')
-                        ->columnSpanFull(),
+                    Forms\Components\Grid::make(2)
+                        ->schema([
+                            Forms\Components\TextInput::make('code')
+                                ->label('Kode Aset')
+                                ->required()
+                                ->unique('assets', 'code')
+                                ->maxLength(50),
+
+                            Forms\Components\TextInput::make('name')
+                                ->label('Nama Aset')
+                                ->required()
+                                ->maxLength(255),
+
+                            Forms\Components\TextInput::make('category')
+                                ->label('Kategori')
+                                ->maxLength(255),
+
+                            Forms\Components\TextInput::make('unit')
+                                ->label('Satuan')
+                                ->required()
+                                ->default('unit'),
+
+                            Forms\Components\Toggle::make('has_serial_number')
+                                ->label('Aset ini memiliki Serial Number?')
+                                ->helperText('Aktifkan jika setiap unit harus diidentifikasi dengan SN unik.')
+                                ->default(false)
+                                ->columnSpanFull(),
+
+                            Forms\Components\Textarea::make('description')
+                                ->label('Keterangan')
+                                ->columnSpanFull(),
+                        ]),
                 ])
+
                 ->createOptionUsing(function (array $data) {
                     return Asset::create(array_merge($data, ['qty' => 0]))->getKey();
                 })
