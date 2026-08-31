@@ -119,9 +119,9 @@ class AssetResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('code')->label('Kode')->searchable()->sortable(),
-                Tables\Columns\TextColumn::make('name')->label('Nama Aset')->searchable()->sortable(),
-                Tables\Columns\TextColumn::make('category')->label('Kategori')->searchable(),
+                Tables\Columns\TextColumn::make('code')->label('Kode')->sortable(),
+                Tables\Columns\TextColumn::make('name')->label('Nama Aset')->sortable(),
+                Tables\Columns\TextColumn::make('category')->label('Kategori'),
                 Tables\Columns\IconColumn::make('has_serial_number')->label('SN?')->boolean(),
                 Tables\Columns\TextColumn::make('qty')->label('Stok')->sortable()->badge()
                     ->color(fn(int $state) => $state > 0 ? 'success' : 'danger'),
@@ -137,7 +137,7 @@ class AssetResource extends Resource
                         ->orderBy('category')
                         ->pluck('category', 'category')
                         ->toArray())
-                    ->searchable()
+
                     ->placeholder('Semua Kategori'),
 
                 TernaryFilter::make('has_serial_number')
