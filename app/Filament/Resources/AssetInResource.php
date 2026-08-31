@@ -195,8 +195,8 @@ class AssetInResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('date')->label('Tanggal')->date('d/m/Y')->sortable(),
-                Tables\Columns\TextColumn::make('asset.code')->label('Kode Aset')->searchable(),
-                Tables\Columns\TextColumn::make('asset.name')->label('Nama Aset')->searchable(),
+                Tables\Columns\TextColumn::make('asset.code')->label('Kode Aset'),
+                Tables\Columns\TextColumn::make('asset.name')->label('Nama Aset'),
                 Tables\Columns\TextColumn::make('qty')->label('Qty')->badge()->color('success'),
                 Tables\Columns\TextColumn::make('supplier')->label('Supplier'),
                 Tables\Columns\TextColumn::make('creator.name')->label('Diinput oleh'),
@@ -232,7 +232,7 @@ class AssetInResource extends Resource
                     ->label('Aset')
                     ->relationship('asset', 'name')
                     ->getOptionLabelFromRecordUsing(fn(Asset $record) => "{$record->code} — {$record->name}")
-                    ->searchable()
+
                     ->preload()
                     ->placeholder('Semua Aset'),
 
@@ -244,7 +244,7 @@ class AssetInResource extends Resource
                         ->orderBy('supplier')
                         ->pluck('supplier', 'supplier')
                         ->toArray())
-                    ->searchable()
+
                     ->placeholder('Semua Supplier'),
             ])
             ->filtersLayout(Tables\Enums\FiltersLayout::AboveContent)
