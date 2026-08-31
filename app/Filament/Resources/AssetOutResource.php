@@ -26,6 +26,7 @@ class AssetOutResource extends Resource
     protected static ?string $modelLabel = 'Aset Keluar';
 
     protected static ?int $navigationSort = 3;
+    protected static ?string $slug = 'aset-keluar';
 
     public static function infolist(Infolist $infolist): Infolist
     {
