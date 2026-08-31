@@ -27,6 +27,8 @@ class AssetInResource extends Resource
     protected static ?string $modelLabel = 'Aset Masuk';
 
     protected static ?int $navigationSort = 2;
+    protected static ?string $slug = 'aset-masuk';
+
 
     public static function infolist(Infolist $infolist): Infolist
     {
