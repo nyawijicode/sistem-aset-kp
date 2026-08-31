@@ -1,7 +1,23 @@
 <x-laporan.layout :title="'Laporan Aset Masuk'">
+    {{-- Ringkasan filter aktif --}}
+    @php
+    $activeFilters = array_filter([
+    ($filters['date_from'] ?? null) ? 'Dari: ' . \Carbon\Carbon::parse($filters['date_from'])->format('d/m/Y') : null,
+    ($filters['date_to'] ?? null) ? 'Sampai: ' . \Carbon\Carbon::parse($filters['date_to'])->format('d/m/Y') : null,
+    ($assetLabel ?? null) ? "Aset: {$assetLabel}" : null,
+    ($filters['supplier'] ?? null) ? "Supplier: {$filters['supplier']}" : null,
+    ]);
+    @endphp
+    @if(count($activeFilters))
+    <div style="margin-bottom:12px;padding:8px 12px;background:#f0fff4;border-left:4px solid #16a34a;font-size:12px;color:#374151;">
+        <strong>Filter aktif:</strong> {{ implode(' &nbsp;|&nbsp; ', $activeFilters) }}
+    </div>
+    @endif
+
     <table>
         <thead>
             <tr>
+                <th>No</th>
                 <th>Tanggal</th>
                 <th>Kode</th>
                 <th>Nama Aset</th>
@@ -11,16 +27,28 @@
             </tr>
         </thead>
         <tbody>
-            @foreach ($data as $row)
+            @forelse ($data as $i => $row)
             <tr>
+                <td>{{ $i + 1 }}</td>
                 <td>{{ $row->date->format('d/m/Y') }}</td>
                 <td>{{ $row->asset->code }}</td>
                 <td>{{ $row->asset->name }}</td>
                 <td>{{ $row->qty }}</td>
-                <td>{{ $row->supplier }}</td>
+                <td>{{ $row->supplier ?? '-' }}</td>
                 <td>{{ $row->creator->name }}</td>
             </tr>
-            @endforeach
+            @empty
+            <tr>
+                <td colspan="7" style="text-align:center;color:#888;">Tidak ada data</td>
+            </tr>
+            @endforelse
         </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="4" style="text-align:right;font-weight:bold;padding-top:8px;">Total masuk:</td>
+                <td style="font-weight:bold;">{{ $data->sum('qty') }}</td>
+                <td colspan="2"></td>
+            </tr>
+        </tfoot>
     </table>
 </x-laporan.layout>

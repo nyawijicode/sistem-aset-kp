@@ -1,7 +1,24 @@
 <x-laporan.layout :title="'Laporan Daftar Aset'">
+    {{-- Ringkasan filter aktif --}}
+    @php
+    $activeFilters = array_filter([
+    $filters['category'] ? "Kategori: {$filters['category']}" : null,
+    isset($filters['has_serial_number']) && $filters['has_serial_number'] !== '' && $filters['has_serial_number'] !== null
+    ? 'SN: ' . (filter_var($filters['has_serial_number'], FILTER_VALIDATE_BOOLEAN) ? 'Punya SN' : 'Tanpa SN')
+    : null,
+    $filters['stok'] ? 'Stok: ' . ($filters['stok'] === 'tersedia' ? 'Tersedia' : 'Habis') : null,
+    ]);
+    @endphp
+    @if(count($activeFilters))
+    <div style="margin-bottom:12px;padding:8px 12px;background:#f0f4ff;border-left:4px solid #2563eb;font-size:12px;color:#374151;">
+        <strong>Filter aktif:</strong> {{ implode(' &nbsp;|&nbsp; ', $activeFilters) }}
+    </div>
+    @endif
+
     <table>
         <thead>
             <tr>
+                <th>No</th>
                 <th>Kode</th>
                 <th>Nama Aset</th>
                 <th>Kategori</th>
@@ -11,16 +28,28 @@
             </tr>
         </thead>
         <tbody>
-            @foreach ($data as $row)
+            @forelse ($data as $i => $row)
             <tr>
+                <td>{{ $i + 1 }}</td>
                 <td>{{ $row->code }}</td>
                 <td>{{ $row->name }}</td>
-                <td>{{ $row->category }}</td>
+                <td>{{ $row->category ?? '-' }}</td>
                 <td>{{ $row->has_serial_number ? 'Ya' : 'Tidak' }}</td>
                 <td>{{ $row->qty }}</td>
                 <td>{{ $row->unit }}</td>
             </tr>
-            @endforeach
+            @empty
+            <tr>
+                <td colspan="7" style="text-align:center;color:#888;">Tidak ada data</td>
+            </tr>
+            @endforelse
         </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="7" style="text-align:right;font-weight:bold;padding-top:8px;">
+                    Total: {{ $data->count() }} aset
+                </td>
+            </tr>
+        </tfoot>
     </table>
 </x-laporan.layout>

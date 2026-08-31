@@ -13,7 +13,10 @@ use Filament\Infolists;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class AssetOutResource extends Resource
 {
@@ -158,12 +161,77 @@ class AssetOutResource extends Resource
                 Tables\Columns\TextColumn::make('recipient')->label('Penerima'),
                 Tables\Columns\TextColumn::make('creator.name')->label('Diinput oleh'),
             ])
+            ->filters([
+                Filter::make('rentang_tanggal')
+                    ->label('Rentang Tanggal')
+                    ->form([
+                        Forms\Components\DatePicker::make('date_from')
+                            ->label('Dari Tanggal')
+                            ->displayFormat('d/m/Y'),
+                        Forms\Components\DatePicker::make('date_to')
+                            ->label('Sampai Tanggal')
+                            ->displayFormat('d/m/Y'),
+                    ])
+                    ->query(function (Builder $query, array $data) {
+                        return $query
+                            ->when($data['date_from'] ?? null, fn($q, $v) => $q->whereDate('date', '>=', $v))
+                            ->when($data['date_to'] ?? null, fn($q, $v) => $q->whereDate('date', '<=', $v));
+                    })
+                    ->indicateUsing(function (array $data): array {
+                        $indicators = [];
+                        if ($data['date_from'] ?? null) {
+                            $indicators[] = 'Dari: ' . \Carbon\Carbon::parse($data['date_from'])->format('d/m/Y');
+                        }
+                        if ($data['date_to'] ?? null) {
+                            $indicators[] = 'Sampai: ' . \Carbon\Carbon::parse($data['date_to'])->format('d/m/Y');
+                        }
+                        return $indicators;
+                    }),
+
+                SelectFilter::make('asset_id')
+                    ->label('Aset')
+                    ->relationship('asset', 'name')
+                    ->getOptionLabelFromRecordUsing(fn(Asset $record) => "{$record->code} — {$record->name}")
+                    ->searchable()
+                    ->preload()
+                    ->placeholder('Semua Aset'),
+
+                SelectFilter::make('recipient')
+                    ->label('Penerima')
+                    ->options(fn() => \App\Models\AssetOut::whereNotNull('recipient')
+                        ->where('recipient', '!=', '')
+                        ->distinct()
+                        ->orderBy('recipient')
+                        ->pluck('recipient', 'recipient')
+                        ->toArray())
+                    ->searchable()
+                    ->placeholder('Semua Penerima'),
+            ])
+            ->filtersLayout(Tables\Enums\FiltersLayout::AboveContent)
             ->headerActions([
                 Tables\Actions\Action::make('cetak_laporan')
                     ->label('Cetak Laporan')
                     ->icon('heroicon-o-printer')
                     ->color('gray')
-                    ->url(fn() => route('laporan.asset-out'))
+                    ->url(function ($livewire) {
+                        $filters = $livewire->tableFilters ?? [];
+                        $params = [];
+
+                        if (! empty($filters['rentang_tanggal']['date_from'])) {
+                            $params['date_from'] = $filters['rentang_tanggal']['date_from'];
+                        }
+                        if (! empty($filters['rentang_tanggal']['date_to'])) {
+                            $params['date_to'] = $filters['rentang_tanggal']['date_to'];
+                        }
+                        if (! empty($filters['asset_id']['value'])) {
+                            $params['asset_id'] = $filters['asset_id']['value'];
+                        }
+                        if (! empty($filters['recipient']['value'])) {
+                            $params['recipient'] = $filters['recipient']['value'];
+                        }
+
+                        return route('laporan.asset-out', $params);
+                    })
                     ->openUrlInNewTab(),
             ])
             ->actions([
