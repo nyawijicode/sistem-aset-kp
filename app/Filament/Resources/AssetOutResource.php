@@ -117,7 +117,7 @@ class AssetOutResource extends Resource
                         ->orWhere('asset_out_id', request()->route('record')) // tampilkan juga SN yg sudah terpilih saat edit
                         ->pluck('serial_number', 'id');
                 })
-                ->searchable()
+
                 ->live()
                 ->afterStateUpdated(fn(Set $set, ?array $state) => $set('qty', count($state ?? [])))
                 ->visible(fn(Get $get) => static::assetHasSerial($get('asset_id')))
@@ -155,8 +155,8 @@ class AssetOutResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('date')->label('Tanggal')->date('d/m/Y')->sortable(),
-                Tables\Columns\TextColumn::make('asset.code')->label('Kode Aset')->searchable(),
-                Tables\Columns\TextColumn::make('asset.name')->label('Nama Aset')->searchable(),
+                Tables\Columns\TextColumn::make('asset.code')->label('Kode Aset'),
+                Tables\Columns\TextColumn::make('asset.name')->label('Nama Aset'),
                 Tables\Columns\TextColumn::make('qty')->label('Qty')->badge()->color('danger'),
                 Tables\Columns\TextColumn::make('recipient')->label('Penerima'),
                 Tables\Columns\TextColumn::make('creator.name')->label('Diinput oleh'),
@@ -192,7 +192,7 @@ class AssetOutResource extends Resource
                     ->label('Aset')
                     ->relationship('asset', 'name')
                     ->getOptionLabelFromRecordUsing(fn(Asset $record) => "{$record->code} — {$record->name}")
-                    ->searchable()
+
                     ->preload()
                     ->placeholder('Semua Aset'),
 
@@ -204,7 +204,7 @@ class AssetOutResource extends Resource
                         ->orderBy('recipient')
                         ->pluck('recipient', 'recipient')
                         ->toArray())
-                    ->searchable()
+
                     ->placeholder('Semua Penerima'),
             ])
             ->filtersLayout(Tables\Enums\FiltersLayout::AboveContent)
