@@ -20,9 +20,10 @@ class AssetResource extends Resource
 
     protected static ?string $navigationLabel = 'Daftar Aset';
 
-    protected static ?string $modelLabel = 'Aset';
+    protected static ?string $modelLabel = 'Daftar Aset';
 
     protected static ?int $navigationSort = 1;
+    protected static ?string $slug = 'daftar-aset';
 
     public static function infolist(Infolist $infolist): Infolist
     {
