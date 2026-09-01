@@ -6,6 +6,10 @@ use App\Models\AssetIn;
 use App\Models\AssetOut;
 use Illuminate\Database\Eloquent\Builder;
 
+Route::get('/', function () {
+    return view('welcome');
+});
+
 Route::middleware(['auth'])->group(function () {
 
     // Laporan Daftar Aset
